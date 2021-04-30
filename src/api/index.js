@@ -291,4 +291,72 @@ export default {
             data: file,
         })
     },
+    selectEnums(name) {
+        return myGet({
+            url: urls.selectEnums,
+            params: {
+                name
+            },
+        })
+    },
+    selectEnumsByPage(name, pageNum, pageSize) {
+        return myGet({
+            url: urls.selectEnumsByPage,
+            params: {
+                name,
+                pageNum,
+                pageSize
+            },
+        })
+    },
+    deleteEnums(id) {
+        return myDelete({
+            url: `${urls.deleteEnums}/${id}`,
+        })
+    },
+    selectEnumsByName(name) {
+        return myGet({
+            url: urls.selectEnumsByName,
+            params: {
+                name,
+            },
+        })
+    },
+    insertEnums(obj) {
+        return myPost({
+            url: urls.insertEnums,
+            data: {
+                ...obj
+            },
+        })
+    },
+    updateEnums(obj) {
+        return myPost({
+            url: urls.updateEnums,
+            data: {
+                ...obj
+            },
+        })
+    },
+    getXzs() {
+        return myGet({
+            url: urls.getXzs,
+        })
+    },
+    getJdsByXzId(xzId) {
+        return myGet({
+            url: urls.getJdsByXzId,
+            params: {
+                xzId,
+            },
+        })
+    },
+    updateJd(obj) {
+        return myPost({
+            url: urls.updateJd,
+            data: {
+                ...obj
+            },
+        })
+    },
 }

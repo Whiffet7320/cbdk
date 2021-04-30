@@ -25,14 +25,8 @@ export default {
   mounted() {
     const oScript = document.createElement("script");
     oScript.type = "text/javascript";
-    oScript.src = "https://gosspublic.alicdn.com/aliyun-oss-sdk-4.4.4.min.js";
+    oScript.src = "https://iclient.supermap.io/web/libs/iclient8c/libs/SuperMap.Include.js";
     document.body.appendChild(oScript);
-
-    //     const oScript2 = document.createElement("script");
-    // oScript2.type = "text/javascript";
-    // oScript2.src = "http://cdnjs.cloudflare.com/ajax/libs/proj4js/2.2.1/proj4.js";
-    // document.body.appendChild(oScript2);
-    // console.log(proj4)
   },
 };
 </script>

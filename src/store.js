@@ -5,19 +5,31 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    selectJbxxByIdObj:{},
-    pageSize:10,
-    page:1,
+    selectJbxxByIdObj: null,
+    pageSize: 10,
+    page: 1,
+    enumerationpageSize: 10,
+    enumerationpage: 1,
+    mapObj:{}
   },
   mutations: {
-    selectJbxxByIdObj(state, str){
+    selectJbxxByIdObj(state, str) {
       state.selectJbxxByIdObj = str;
     },
-    pageSize(state, str){
+    pageSize(state, str) {
       state.pageSize = str;
     },
-    page(state, str){
+    page(state, str) {
       state.page = str;
+    },
+    enumerationpageSize(state, str) {
+      state.enumerationpageSize = str;
+    },
+    enumerationpage(state, str) {
+      state.enumerationpage = str;
+    },
+    mapObj(state, str) {
+      state.mapObj = str;
     },
   },
   actions: {

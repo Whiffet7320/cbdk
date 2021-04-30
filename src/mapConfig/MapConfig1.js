@@ -2,7 +2,7 @@ export default {
     option: {
         view: {
             center: [120.695, 27.997],
-            zoom: 2
+            zoom: 5
             //maxZoom: 15,
             //minZoom: 6
         }
@@ -57,12 +57,12 @@ export default {
                     id: "GCS_CBDK",
                     layerType: "WMS",
                     caption: "储备地块",
-                    url: "http://192.168.1.239:8090/iserver/services/map-cbdk/wms130/cbdk_jbxx",
+                    url: "http://192.168.1.131:8090/iserver/services/map-cbdk/wms111",
                     params: {
-                        'LAYERS': 'cbdk_jbxx@cbdk',
+                        'LAYERS': 'cbdk_jbxx@cbdk', 
                         'FORMAT': 'image/png'
                     },
-                    queryUrl: "http://192.168.1.239:8090/iserver/services/data-cbdk/wfs100/utf-8?service=wfs&version=1.1.0&request=GetFeature&TYPENAME=cbdk:cbdk_jbxx",
+                    queryUrl: "http://192.168.1.131:8090/iserver/services/data-cbdk/wfs100/utf-8?service=wfs&version=1.1.0&request=GetFeature&TYPENAME=cbdk:cbdk_jbxx",
                     visible: true
                 }
             ]

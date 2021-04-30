@@ -20,6 +20,10 @@
           <i class="el-icon-document-copy"></i>
           <p>数据统计</p>
         </el-menu-item>
+        <el-menu-item index="Management" :route="{ name: 'Management' }">
+          <i class="el-icon-document-copy"></i>
+          <p>管理中心</p>
+        </el-menu-item>
       </el-menu>
     </div>
 
@@ -57,10 +61,12 @@ export default {
     $route(to) {
       console.log(to.path); //到哪去
       if (to.path == "/Administration/") {
-        this.activeIndex = 'Administration'
+        this.activeIndex = "Administration";
       } else if (to.path == "/Statistics") {
-        this.activeIndex = 'Statistics'
-      } 
+        this.activeIndex = "Statistics";
+      } else if (to.path == "/Management") {
+        this.activeIndex = "Management";
+      }
     },
   },
 };

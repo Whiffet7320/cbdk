@@ -135,7 +135,12 @@
         </el-tab-pane>
         <el-tab-pane label="住宅拟出让情况" name="fourth">
           <div class="top">
-            <el-button @click="importExcal" icon="el-icon-download" type="danger" size="small">
+            <el-button
+              @click="importExcal"
+              icon="el-icon-download"
+              type="danger"
+              size="small"
+            >
               <span class="xlsExport">导出</span>
             </el-button>
             <p>面积单位：亩</p>
@@ -218,12 +223,14 @@ export default {
     };
   },
   methods: {
+    // 表格导出
+    importExcal() {},
     handleClick(tab) {
       console.log(tab);
     },
     // 金额显示.00格式
     NumFormat(value) {
-      if (!value) return "0.00";
+      if (!value || value == "0") return "0";
       value = value.toFixed(2);
       var intPart = Math.trunc(value); // 获取整数部分
       var intPartFormat = intPart
@@ -248,10 +255,23 @@ export default {
     // 储备机构
     const res = await this.$api.getReportFormByJgmcOrSzxzq("cbjgmc");
     res.data.forEach((ele) => {
-      ele.qtsum = +ele.qtsum.toFixed(2);
-      ele.sfsum = +ele.sfsum.toFixed(2);
-      ele.zzsum = +ele.zzsum.toFixed(2);
-      ele.sum = +ele.sum.toFixed(2);
+      console.log(ele);
+      if (!ele.qtsum) {
+        ele.qtsum = 0;
+      }
+      if (!ele.sfsum) {
+        ele.sfsum = 0;
+      }
+      if (!ele.zzsum) {
+        ele.zzsum = 0;
+      }
+      if (!ele.sum) {
+        ele.sum = 0;
+      }
+      // ele.qtsum = this.NumFormat(+ele.qtsum)
+      // ele.sfsum = this.NumFormat(+ele.sfsum)
+      // ele.zzsum = this.NumFormat(+ele.zzsum)
+      // ele.sum = this.NumFormat(+ele.sum)
       ele.numSum =
         parseInt(ele.qtcount) + parseInt(ele.zzcount) + parseInt(ele.sfcount);
       ele.jyxydCount = parseInt(ele.zzcount) + parseInt(ele.sfcount);
@@ -261,10 +281,23 @@ export default {
     // 区域
     const res2 = await this.$api.getReportFormByJgmcOrSzxzq("szxzq");
     res2.data.forEach((ele) => {
-      ele.qtsum = +ele.qtsum.toFixed(2);
-      ele.sfsum = +ele.sfsum.toFixed(2);
-      ele.zzsum = +ele.zzsum.toFixed(2);
-      ele.sum = +ele.sum.toFixed(2);
+      if (!ele.qtsum) {
+        ele.qtsum = 0;
+      }
+      if (!ele.sfsum) {
+        ele.sfsum = 0;
+      }
+      if (!ele.zzsum) {
+        ele.zzsum = 0;
+      }
+      if (!ele.sum) {
+        ele.sum = 0;
+      }
+      // ele.qtsum = +ele.qtsum.toFixed(2);
+      // ele.qtsum = this.NumFormat(+ele.qtsum);
+      // ele.sfsum = +ele.sfsum.toFixed(2);
+      // ele.zzsum = +ele.zzsum.toFixed(2);
+      // ele.sum = +ele.sum.toFixed(2);
       ele.numCount =
         parseInt(ele.qtcount) + parseInt(ele.zzcount) + parseInt(ele.sfcount);
       ele.jyxydCount = parseInt(ele.zzcount) + parseInt(ele.sfcount);
@@ -353,6 +386,9 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+  p {
+    margin-bottom: 0;
+  }
   height: 60px;
   display: flex;
   align-items: center;

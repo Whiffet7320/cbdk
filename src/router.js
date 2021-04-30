@@ -28,6 +28,11 @@ const routes = [
         name: 'Statistics',
         component: () => import('./components/Statistics')
     },
+    {
+        path: '/Management',
+        name: 'Management',
+        component: () => import('./components/Management')
+    },
     // {
     //     path: '/NewAdd',
     //     name: 'NewAdd',

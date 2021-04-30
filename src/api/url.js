@@ -1,5 +1,5 @@
 export default {
-    baseUrl: 'http://192.168.1.121:18888/cbdk',
+    baseUrl: 'http://192.168.1.195:8888/cbdk',
     selectJbxx: '/cbdk-jbxx/selectJbxx',//查询基本信息
     saveJbxx:'/cbdk-jbxx/saveJbxx',//存储基本信息(新增)
     selectJbxxById: '/cbdk-jbxx/selectJbxxById',//获取基础信息
@@ -24,4 +24,16 @@ export default {
     getMercantileConstructiveLand:'/cbdk-bbxx/getMercantileConstructiveLand',//统计经营性用地拟出让情况
     getCommercialLand:'/cbdk-bbxx/getCommercialLand',//统计商业用地拟出让情况
     getResidentialLand:'/cbdk-bbxx/getResidentialLand',//统计住宅用地拟出让情况
+    // 枚举信息
+    selectEnums:'/enums/selectEnums',//根据枚举名称查询枚举信息，不传参数则查全部
+    selectEnumsByPage:'/enums/selectEnumsByPage',//分页查询枚举信息
+    deleteEnums:'/enums/deleteEnums',//删除枚举信息
+    selectEnumsByName:'/enums/selectEnumsByName',//根据枚举名称模糊查询枚举信息，不传参数则查全部
+    insertEnums:'/enums/insertEnums',//存储枚举信息
+    updateEnums:'/enums/updateEnums',//修改枚举信息
+    // 行政
+    getXzs:'/xz/getXzs',//获取所有行政区
+    getJdsByXzId:'/jd/getJdsByXzId',//根据行政区获取所有街道
+    updateJd:'/jd/updateJd',//修改是否为中心城区
+
 }

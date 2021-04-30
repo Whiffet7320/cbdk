@@ -8,33 +8,22 @@ import router from './router';
 import axios from 'axios';
 import api from './api/index';
 import store from './store';
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+// import  '@supermap/vue-iclient3d-webgl/dist/styles/vue-iclient3d-webgl.min.css';
+// import VueiClient from '@supermap/vue-iclient3d-webgl';
+// Vue.use(VueiClient);
 
-import VueAMap from "vue-amap";
+// Vue.prototype.$Supermap = VueiClient
 
 Vue.prototype.$myAxios = axios;
 Vue.prototype.$api = api
 
-Vue.use(VueAMap);
-
-VueAMap.initAMapApiLoader({
-  key: "95fa72137f4263f8e64ae01f766ad09c",
-  plugin: [
-    "AMap.Autocomplete",
-    "AMap.PlaceSearch",
-    "AMap.Scale",
-    "AMap.OverView",
-    "AMap.ToolBar",
-    "AMap.MapType",
-    "AMap.PolyEditor",
-    "AMap.CircleEditor",
-    "AMap.Geocoder"
-  ],
-  // 默认高德 sdk 版本为 1.4.4
-  v: "1.4.4"
-});
 
 Vue.use(Antd);
 Vue.use(ElementUI);
+Vue.use(VXETable)
 
 Vue.config.productionTip = false
 

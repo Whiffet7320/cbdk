@@ -20,18 +20,12 @@
         </el-form-item>
         <el-form-item label="行政区：" prop="szxzq">
           <el-checkbox-group v-model="form.szxzq" size="small">
-            <el-checkbox label="鹿城区" border></el-checkbox>
-            <el-checkbox label="龙湾区" border></el-checkbox>
-            <el-checkbox label="瓯海区" border></el-checkbox>
-            <el-checkbox label="洞头区" border></el-checkbox>
-            <el-checkbox label="经开区" border></el-checkbox>
-            <el-checkbox label="永嘉县" border></el-checkbox>
-            <el-checkbox label="平阳县" border></el-checkbox>
-            <el-checkbox label="苍南县" border></el-checkbox>
-            <el-checkbox label="文成县" border></el-checkbox>
-            <el-checkbox label="泰顺县" border></el-checkbox>
-            <el-checkbox label="瑞安市" border></el-checkbox>
-            <el-checkbox label="乐清市" border></el-checkbox>
+            <el-checkbox
+              v-for="item in xzqList"
+              :key="item.id"
+              :label="item.location"
+              border
+            ></el-checkbox>
           </el-checkbox-group>
         </el-form-item>
 
@@ -55,9 +49,7 @@
 
         <el-form-item label="储备状态：" prop="zt">
           <el-radio-group v-model="form.zt" size="small">
-            <el-radio label="在库" border>在库</el-radio>
-            <el-radio label="部分出库" border>部分出库</el-radio>
-            <el-radio label="已出库" border>已出库</el-radio>
+            <el-radio v-for="item in this.form.ztList" :key="item.id" :label="item.value" border>{{item.value}}</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -82,8 +74,6 @@
       <el-divider></el-divider>
       <div class="tab">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="sNo" label="地块电子编号" width="120">
-          </el-table-column>
           <el-table-column
             prop="dkmc"
             label="地块名称"
@@ -97,10 +87,11 @@
             label="行政区"
           >
           </el-table-column>
+          <el-table-column prop="szjd" label="街道"> </el-table-column>
           <el-table-column prop="cbjgmc" label="储备机构名称">
           </el-table-column>
           <el-table-column prop="zt" label="储备状态"> </el-table-column>
-          <el-table-column prop="sNo" label="入库时间"> </el-table-column>
+          <el-table-column prop="rksj" label="入库时间"> </el-table-column>
           <el-table-column
             prop="fjyxydlx"
             label="非经营性用地"
@@ -194,7 +185,7 @@
       <el-dialog
         title="地图模式"
         :visible.sync="this.mapDialogVisible"
-        width="50%"
+        width="80%"
         :before-close="maphandleClose"
       >
         <AMap />
@@ -545,7 +536,7 @@
 <script>
 import mixinsNowTime from "../../mixins/nowTime";
 import { mapState } from "vuex";
-import AMap from "../AMap";
+import AMap from "../AMap/index2";
 export default {
   mixins: [mixinsNowTime()],
   computed: {
@@ -568,9 +559,11 @@ export default {
         startTime: "",
         endTime: "",
         zt: "", //储备状态
+        ztList: [],
         nfcr: "", //能否出让
         cbjgmc: "", //搜索
       },
+      xzqList: [],
       tableData: [],
       enclosureDialogVisible: false, //附件弹出框
       enclosureTableData: [],
@@ -621,6 +614,13 @@ export default {
   },
   async created() {
     await this.getData();
+    const res2 = await this.$api.selectEnums();
+    res2.data.forEach((ele) => {
+      if (ele.name == "状态") {
+        // 状态
+        this.form.ztList.push(ele);
+      }
+    });
   },
   watch: {
     page: function (page) {
@@ -860,12 +860,14 @@ export default {
       this.tableData = data.data;
       console.log(this.tableData, data, this.total);
       this.searchDataById(50);
+      let data1 = await this.$api.getXzs();
+      this.xzqList = data1.data;
     },
     // 根据id获取基础信息
     async searchDataById(id) {
       let dataById = await this.$api.selectJbxxById(id);
       dataById = dataById.data;
-      console.log(dataById);
+      // console.log(dataById);
     },
     getBtnName() {
       if (this.btnFlag) {
@@ -934,6 +936,9 @@ export default {
 
 <style lang="scss" scoped>
 .header {
+  p {
+    margin-bottom: 0;
+  }
   height: 60px;
   display: flex;
   align-items: center;
