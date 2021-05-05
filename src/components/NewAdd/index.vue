@@ -517,6 +517,10 @@ export default {
   },
   data() {
     return {
+      mapDialogID: true,
+      shape: null,
+      add_data: {},
+      formData: new FormData(),
       sydk: [], //商业地块
       qqkfqkList: [], // 前期开发情况
       mapDialogVisible: false, //地图模式
@@ -855,15 +859,32 @@ export default {
         this.ruleForm.bncrbmyyList.push(ele);
       }
     });
-    console.log(this.ruleForm.fjyxydlxList);
-    console.log(this.selectJbxxByIdObj);
+    // console.log(this.ruleForm.fjyxydlxList);
+    // console.log(this.selectJbxxByIdObj);
     if (this.selectJbxxByIdObj) {
+      const shapeRes = await this.$api.getshape(this.selectJbxxByIdObj.id);
+      let shape = shapeRes.data;
+      //转换后的坐标
+      this.shape = "MULTIPOLYGON(";
+      for (var f = 0; f < shape.length; f++) {
+        var polygon1 = shape[f];
+        this.shape += "((";
+        for (var h = 0; h < polygon1.length; h++) {
+          this.shape += polygon1[h][0] + " " + polygon1[h][1] + ",";
+        }
+        this.shape = this.shape.substr(0, this.shape.length - 1);
+        this.shape += ")),";
+      }
+      this.shape = this.shape.substr(0, this.shape.length - 1);
+      this.shape += ")";
+      this.isDetail = true;
       this.tableData = this.selectJbxxByIdObj.cbdkDkghxxes;
       this.ruleForm = { ...this.ruleForm, ...this.selectJbxxByIdObj };
       this.pageTitle = "修改页面";
     } else {
       this.pageTitle = "新增页面";
     }
+    console.log(this.ruleForm.qqkfqk);
     if (this.ruleForm.qqkfqk && this.ruleForm.qqkfqk.length !== 0) {
       this.ruleForm.qqkfqk = this.ruleForm.qqkfqk.split(";");
       this.ruleForm.qqkfqk.splice(-1, 1);
@@ -976,8 +997,9 @@ export default {
         this.ruleForm.szxzq = newSzxzq[0];
         this.ruleForm.szjd = newSzxzq[1];
         this.ruleForm.qqkfqk = this.ruleForm.qqkfqk.toString();
-        this.ruleForm.qqkfqk = this.ruleForm.qqkfqk.replace(/,/g, ";") + ";";
-        console.log(this.ruleForm.qqkfqk);
+        if (this.ruleForm.qqkfqk != "") {
+          this.ruleForm.qqkfqk = this.ruleForm.qqkfqk.replace(/,/g, ";") + ";";
+        }
         // console.log(this.ruleForm);
         let res = null;
         if (!this.selectJbxxByIdObj) {
@@ -1002,6 +1024,11 @@ export default {
           console.log(myObj);
           res = await this.$api.saveJbxx(myObj); //新增
           console.log(res);
+          const res2 = await this.$api.saveYstx({
+            cbdkId: res.data.id,
+            shape: res.data.shape,
+          });
+          console.log(res2);
         } else {
           // 修改
           const myObj = { ...this.ruleForm };
@@ -1014,7 +1041,7 @@ export default {
             myObj.jzdj = myObj.jzdj.toString();
           }
           delete myObj.name;
-          delete myObj.shape;
+          // delete myObj.shape;
           delete myObj.fjyxydlxList;
           delete myObj.szjdList;
           delete myObj.szxzqList;
@@ -1054,7 +1081,16 @@ export default {
       this.$el.querySelector(link.href).scrollIntoView();
     },
     // 详情
-    detaliClick() {
+    async detaliClick() {
+      if (
+        this.selectJbxxByIdObj &&
+        this.selectJbxxByIdObj.id &&
+        this.mapDialogID
+      ) {
+        const res = await this.$api.getshape(this.selectJbxxByIdObj.id);
+        console.log(res.data);
+        this.$store.commit("getshape", res.data);
+      }
       this.mapDialogVisible = true;
     },
     // 文件上传
@@ -1062,17 +1098,26 @@ export default {
       this.$refs.fileInputList.click();
     },
     async companyLogo(event) {
-      console.log(event);
+      if (!this.formData) {
+        this.formData = new FormData();
+      }
+      console.log(event.target.files[0]);
       this.file = event.target.files[0];
-      let formData = new FormData();
-      formData.append("file", this.file);
-      let res = await this.$api.upload(formData);
+      // let formData = new FormData();
+      this.formData.append("file", this.file);
+      console.log(this.formData.getAll("file"));
+      console.log(this.formData);
+      let res = await this.$api.upload(this.formData);
       console.log(res);
       if (res.code == 200) {
+        this.formData.delete("file");
+        this.formData = null;
         this.$refs.fileInputList.value = "";
         this.isDetail = true;
         console.log(res.data);
         this.$store.commit("mapObj", res.data);
+        this.$store.commit("getshape", null);
+        this.mapDialogID = false;
         this.mapDialogVisible = true;
         const obj = {
           ghyt: res.data.dkyt,
@@ -1082,24 +1127,35 @@ export default {
         };
         // console.log(obj);
         this.upLoadObj = obj;
-        //原坐标
-        this.ruleForm.shape = "MULTIPOLYGON(((";
-        for (var i = 0; i < res.data.multiPolyGon.length; i++) {
-          var polygon = res.data.multiPolyGon[i];
-          for (var j = 0; j < polygon.length; j++) {
-            if (j == polygon.length - 1) {
-              this.ruleForm.shape += polygon[i][0] + " " + polygon[i][1];
-            } else {
-              this.ruleForm.shape += polygon[i][0] + " " + polygon[i][1] + ",";
-            }
-          }
-          this.ruleForm.shape += ")))";
-        }
+        // //原坐标
+        // this.shape = "MULTIPOLYGON(((";
+        // // console.log(res.data.multiPolyGon);
+        // for (var i = 0; i < res.data.multiPolyGon.length; i++) {
+        //   var polygon = res.data.multiPolyGon[i];
+        //   for (var j = 0; j < polygon.length; j++) {
+        //     if (j == polygon.length - 1) {
+        //       this.shape += polygon[j][0] + " " + polygon[j][1];
+        //     } else {
+        //       this.shape += polygon[j][0] + " " + polygon[j][1] + ",";
+        //     }
+        //   }
+        //   this.shape += ")))";
+        // }
         this.SKUupLoaddialogVisible = true;
-        this.rules.jzdsc[0].required = false;
-        this.$refs.ruleForm.validateField("jzdsc", (val) => {
-          console.log(val);
-        });
+        //转换后的坐标
+        var shape1 = "MULTIPOLYGON(";
+        for (var f = 0; f < res.data.showMultiPolyGon.length; f++) {
+          var polygon1 = res.data.showMultiPolyGon[f];
+          shape1 += "((";
+          for (var h = 0; h < polygon1.length; h++) {
+            shape1 += polygon1[h][0] + " " + polygon1[h][1] + ",";
+          }
+          shape1 = shape1.substr(0, shape1.length - 1);
+          shape1 += ")),";
+        }
+        shape1 = shape1.substr(0, shape1.length - 1);
+        shape1 += ")";
+        this.ruleForm.shape = shape1;
       } else {
         this.$message.error("地块文件格式错误");
       }

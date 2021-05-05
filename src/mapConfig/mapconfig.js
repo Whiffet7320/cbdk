@@ -57,7 +57,7 @@ export default {
                     id: "GCS_CBDK",
                     layerType: "WMS",
                     caption: "储备地块",
-                    url: "http://192.168.1.131:8090/iserver/services/map-cbdk/wms130/cbdk_jbxx",
+                    url: "http://192.168.1.131:8090/iserver/services/map-cbdk/wms111/cbdk_jbxx",
                     params: {
                         'LAYERS': 'cbdk_jbxx@cbdk',
                         'FORMAT': 'image/png'

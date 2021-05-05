@@ -10,7 +10,8 @@ export default new Vuex.Store({
     page: 1,
     enumerationpageSize: 10,
     enumerationpage: 1,
-    mapObj:{}
+    mapObj:null,
+    getshape:null,
   },
   mutations: {
     selectJbxxByIdObj(state, str) {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
     },
     mapObj(state, str) {
       state.mapObj = str;
+    },
+    getshape(state, str) {
+      state.getshape = str;
     },
   },
   actions: {

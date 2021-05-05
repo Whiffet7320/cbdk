@@ -254,6 +254,7 @@ export default {
   async created() {
     // 储备机构
     const res = await this.$api.getReportFormByJgmcOrSzxzq("cbjgmc");
+    console.log(res)
     res.data.forEach((ele) => {
       console.log(ele);
       if (!ele.qtsum) {

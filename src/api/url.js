@@ -18,6 +18,9 @@ export default {
     delck:'/cbdk-ckxx/delck',//删除出库信息
     download:'/cbdk-ystx/download',//信息下载
     upload:'/cbdk-jbxx/upload',//地块文件上传
+    getshape:'/cbdk-jbxx/getshape',//根据ID获取图形
+    saveYstx:'/cbdk-ystx/saveYstx',//存储
+    
     
     // 表格
     getReportFormByJgmcOrSzxzq:'/cbdk-bbxx/getReportFormByJgmcOrSzxzq',//按储备机构和区域查询的报表

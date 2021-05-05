@@ -359,4 +359,20 @@ export default {
             },
         })
     },
+    getshape(id) {
+        return myGet({
+            url: urls.getshape,
+            params: {
+                id,
+            },
+        })
+    },
+    saveYstx(obj){
+        return myPost({
+            url: urls.saveYstx,
+            data: {
+                ...obj
+            },
+        })
+    },
 }

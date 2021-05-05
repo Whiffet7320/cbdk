@@ -23,7 +23,6 @@ import * as olControl from "ol/control";
 import Overlay from "ol/Overlay";
 import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
-import { SuperMap } from "@supermap/iclient-classic/index";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Polygon from "ol/geom/Polygon";
@@ -32,13 +31,13 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import * as olExtent from "ol/extent";
 // import Circle from "ol/geom/Circle";
-import CircleStyle from 'ol/style/Circle';
-import TileArcGISRest from 'ol/source/TileArcGISRest';
+import CircleStyle from "ol/style/Circle";
+import TileArcGISRest from "ol/source/TileArcGISRest";
 
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["mapObj"]),
+    ...mapState(["mapObj", "getshape"]),
   },
   data() {
     return {
@@ -99,12 +98,11 @@ export default {
       longAndNarrowLayer: null,
     };
   },
-  async created(){
+  async created() {
     // let res = await this.$api.upload(formData);
     // this.$store.commit('mapObj',res.data)
   },
   mounted() {
-    console.log(SuperMap);
     this.initMap();
     this.loadData();
   },
@@ -242,8 +240,7 @@ export default {
             maplayer.setOpacity(ele.subLayers[0].opacity);
           }
           this.map.addLayer(maplayer);
-        }
-        else if (ele.subLayers[0].layerType == "TileXYZ") {
+        } else if (ele.subLayers[0].layerType == "TileXYZ") {
           //设置切片的原点
           var origin1 = ele.subLayers[0].origin;
           //切片的方案
@@ -331,28 +328,35 @@ export default {
 
       var coordinatesPolygon = new Array();
       // var isMulti = false;
-      console.log(this.mapObj);
+      // console.log(this.mapObj);
       // if (this.mapObj.showMultiPolyGon.length > 1) {
       //   isMulti = true;
       // }
-      var _polygon = new Polygon(this.mapObj.showMultiPolyGon);
+      var _polygon = null;
+      console.log(this.getshape, this.mapObj);
+      if (this.getshape) {
+        _polygon = new Polygon(this.getshape);
+      } else {
+        _polygon = new Polygon(this.mapObj.showMultiPolyGon);
+      }
+
       var feature = new Feature({
         geometry: _polygon,
       });
       feature.setStyle(
         new Style({
-            // 默认矩形样式
-            fill: new Fill({
-              color: "rgba(0,0,0,0)",
-            }),
-            stroke: new Stroke({
-              color: "rgb(0,0,255)",
-              width: 2,
-            }),
+          // 默认矩形样式
+          fill: new Fill({
+            color: "rgba(0,0,0,0)",
+          }),
+          stroke: new Stroke({
+            color: "rgb(0,0,255)",
+            width: 2,
+          }),
         })
       );
       this.vetorLayer.getSource().addFeature(feature);
-
+      console.log(this.vetorLayer);
       var extent = olExtent.boundingExtent(
         feature.getGeometry().getCoordinates()[0]
       ); //获取一个坐标数组的边界，格式为[minx,miny,maxx,maxy]
@@ -366,117 +370,129 @@ export default {
       //   this.intersect.innerHTML += "上传图形为多面";
       // }
       //自相交
+      if (this.mapObj) {
+        for (var i = 0; i < this.mapObj.selfIntersectionPoints.length; i++) {
+          var point = [
+            this.mapObj.selfIntersectionPoints[i].x,
+            this.mapObj.selfIntersectionPoints[i].y,
+          ];
 
-      for (var i = 0; i < this.mapObj.selfIntersectionPoints.length; i++) {
-        var point = [
-          this.mapObj.selfIntersectionPoints[i].x,
-          this.mapObj.selfIntersectionPoints[i].y,
-        ];
+          //var _point1 = this._g.XY2BL(this._Ellipsoid, this._L0, point1);
+          //var point = [_point1.y, _point1.x];
+          feature = new Feature({
+            geometry: new Point(point),
+          });
+          feature.setStyle(
+            new Style({
+              // 默认点样式
 
-        //var _point1 = this._g.XY2BL(this._Ellipsoid, this._L0, point1);
-        //var point = [_point1.y, _point1.x];
-        feature = new Feature({
-          geometry: new Point(point),
-        });
-        feature.setStyle(
-          new Style({
-            // 默认点样式
-
-            image: new CircleStyle({
-              radius: 6,
-              fill: new Fill({
-                color: "red",
+              image: new CircleStyle({
+                radius: 6,
+                fill: new Fill({
+                  color: "red",
+                }),
               }),
-            }),
-          })
-        );
-        this.selfIntersectionLayer.getSource().addFeature(feature);
-      }
-      //重复
-      for (var a = 0; a < this.mapObj.repeat.length; a++) {
-        //var point1 = { x: this.mapObj.repeat[a].y, y: this.mapObj.repeat[a].x };
-        //var _point1 = this._g.XY2BL(this._Ellipsoid, this._L0, point1);
-        var point_1 = [this.mapObj.repeat[a].x, this.mapObj.repeat[a].y];
-        feature = new Feature({
-          geometry: new Point(point_1),
-        });
-        feature.setStyle(
-          new Style({
-            // 默认点样式
-
-            image: new CircleStyle({
-              radius: 6,
-              fill: new Fill({
-                color: "yellow",
-              }),
-            }),
-          })
-        );
-        this.repeatLayer.getSource().addFeature(feature);
-      }
-
-      //角度
-      for (var b = 0; b < this.mapObj.angle.length; b++) {
-        //var point1 = { x: this.mapObj.angle[b].y, y: this.mapObj.angle[b].x };
-
-        //var _point1 = this._g.XY2BL(this._Ellipsoid, this._L0, point1);
-        var point2 = [this.mapObj.angle[b].x, this.mapObj.angle[b].y];
-        feature = new Feature({
-          geometry: new Point(point2),
-        });
-        feature.setStyle(
-          new Style({
-            // 默认点样式
-
-            image: new CircleStyle({
-              radius: 6,
-              fill: new Fill({
-                color: "black",
-              }),
-            }),
-          })
-        );
-        this.angleLayer.getSource().addFeature(feature);
-      }
-      //狭长
-      for (var c = 0; c < this.mapObj.longAndNarrow.length; c++) {
-        coordinatesPolygon = new Array();
-        for (var j = 0; j < this.mapObj.longAndNarrow[c].length; j++) {
-          var polygon = [];
-          for (var k = 0; k < this.mapObj.longAndNarrow[c][j].length; k++) {
-            var point1 = {
-              x: this.mapObj.longAndNarrow[c][j][k].y,
-              y: this.mapObj.longAndNarrow[c][j][k].x,
-            };
-            var _point1 = this.XY2BL(this.Ellipsoid, this.L0, point1);
-            var point_2 = [_point1.y, _point1.x];
-            polygon.push(point_2);
-          }
-          coordinatesPolygon[j] = polygon;
-          console.log(coordinatesPolygon)
+            })
+          );
+          this.selfIntersectionLayer.getSource().addFeature(feature);
         }
-        feature = new Feature({
-          geometry: new Polygon(coordinatesPolygon),
-        });
-        feature.setStyle(
-          new Style({
-            // 默认矩形样式
-            fill: new Fill({
-              color: "rgba(0,0,0,0)",
-            }),
-            stroke: new Stroke({
-              color: "rgb(0,255,0)",
-              width: 2,
-            }),
-          })
-        );
-        console.log(feature);
-        this.longAndNarrowLayer.getSource().addFeature(feature);
+        //重复
+        for (var a = 0; a < this.mapObj.repeat.length; a++) {
+          //var point1 = { x: this.mapObj.repeat[a].y, y: this.mapObj.repeat[a].x };
+          //var _point1 = this._g.XY2BL(this._Ellipsoid, this._L0, point1);
+          var point_1 = [this.mapObj.repeat[a].x, this.mapObj.repeat[a].y];
+          feature = new Feature({
+            geometry: new Point(point_1),
+          });
+          feature.setStyle(
+            new Style({
+              // 默认点样式
+
+              image: new CircleStyle({
+                radius: 6,
+                fill: new Fill({
+                  color: "yellow",
+                }),
+              }),
+            })
+          );
+          this.repeatLayer.getSource().addFeature(feature);
+        }
+
+        //角度
+        for (var b = 0; b < this.mapObj.angle.length; b++) {
+          //var point1 = { x: this.mapObj.angle[b].y, y: this.mapObj.angle[b].x };
+
+          //var _point1 = this._g.XY2BL(this._Ellipsoid, this._L0, point1);
+          var point2 = [this.mapObj.angle[b].x, this.mapObj.angle[b].y];
+          feature = new Feature({
+            geometry: new Point(point2),
+          });
+          feature.setStyle(
+            new Style({
+              // 默认点样式
+
+              image: new CircleStyle({
+                radius: 6,
+                fill: new Fill({
+                  color: "black",
+                }),
+              }),
+            })
+          );
+          this.angleLayer.getSource().addFeature(feature);
+        }
+        //狭长
+        for (var c = 0; c < this.mapObj.longAndNarrow.length; c++) {
+          coordinatesPolygon = new Array();
+          for (var j = 0; j < this.mapObj.longAndNarrow[c].length; j++) {
+            var polygon = [];
+            for (var k = 0; k < this.mapObj.longAndNarrow[c][j].length; k++) {
+              var point1 = {
+                x: this.mapObj.longAndNarrow[c][j][k].y,
+                y: this.mapObj.longAndNarrow[c][j][k].x,
+              };
+              var _point1 = this.XY2BL(this.Ellipsoid, this.L0, point1);
+              var point_2 = [_point1.y, _point1.x];
+              polygon.push(point_2);
+            }
+            coordinatesPolygon[j] = polygon;
+            console.log(coordinatesPolygon);
+          }
+          feature = new Feature({
+            geometry: new Polygon(coordinatesPolygon),
+          });
+          feature.setStyle(
+            new Style({
+              // 默认矩形样式
+              fill: new Fill({
+                color: "rgba(0,0,0,0)",
+              }),
+              stroke: new Stroke({
+                color: "rgb(0,255,0)",
+                width: 2,
+              }),
+            })
+          );
+          console.log(feature);
+          this.longAndNarrowLayer.getSource().addFeature(feature);
+        }
       }
 
       //var source = new VectorSource({
       //    features: (new ol.format.GeoJSON()).readFeatures(this.mapObj.allCoordinates)
       //});
+    },
+  },
+  watch: {
+    mapObj: function (mapObj) {
+      this.$store.commit("mapObj", mapObj);
+      // this.initMap();
+      this.loadData();
+    },
+    getshape: function (getshape) {
+      this.$store.commit("getshape", getshape);
+      this.loadData();
     },
   },
 };

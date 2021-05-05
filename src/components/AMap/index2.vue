@@ -2,7 +2,12 @@
   <div>
     <div ref="rootmap" id="map"></div>
     <div id="popup" class="ol-popup">
-      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <a
+        href="#"
+        @click="closeBtn"
+        id="popup-closer"
+        class="ol-popup-closer"
+      ></a>
       <div id="popup-content"></div>
     </div>
   </div>
@@ -89,6 +94,11 @@ export default {
     this.bindEvent();
   },
   methods: {
+    closeBtn() {
+      this._overlay.setPosition(undefined);
+      document.getElementById("popup-closer").blur();
+      return false;
+    },
     initMap() {
       proj4.defs("EPSG:4490", "+proj=longlat +ellps=GRS80 +no_defs");
       var projection_200000 = new Projection({
@@ -355,7 +365,7 @@ export default {
           if (features.length > 0) {
             var properties = features[0].getProperties();
             for (var i = 0; i < this.fields.length; i++) {
-                // console.log(properties)
+              // console.log(properties)
               content.innerHTML +=
                 "<b>" +
                 this.fields[i].alias +

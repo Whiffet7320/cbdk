@@ -185,7 +185,7 @@
       <el-dialog
         title="地图模式"
         :visible.sync="this.mapDialogVisible"
-        width="80%"
+        width="70%"
         :before-close="maphandleClose"
       >
         <AMap />
@@ -795,6 +795,7 @@ export default {
     },
     // 文件下载
     async fileDownload(row) {
+      console.log(row)
       window.open(await this.$api.fileDownload(row.xgyjfj));
     },
     // 附件上传
@@ -803,10 +804,12 @@ export default {
     },
     async companyLogo(event) {
       var file = event.target.files[0];
+      console.log(file)
       let formData = new FormData();
       formData.append("file", file);
       let res = await this.$api.fileUpload(formData);
       console.log(this.cbdkGxxx);
+      console.log(res)
       let obj = {
         cbdkId: this.cbdkGxxx.id,
         czr: "2",
@@ -889,7 +892,7 @@ export default {
         this.form.startTime = "";
         this.form.endTime = "";
       }
-
+      this.$store.commit('page',1)
       this.form.newSzxzq = this.form.szxzq.toString();
       this.getData();
     },
@@ -900,7 +903,7 @@ export default {
       this.form.endTime = "";
       this.form.startTime = "";
       this.form.newSzxzq = "";
-      this.page = 1;
+      this.$store.commit('page',1)
       this.getData();
     },
     // 操作
