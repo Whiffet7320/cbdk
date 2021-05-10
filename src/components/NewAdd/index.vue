@@ -9,7 +9,7 @@
         <a-anchor-link href="#anchor-0" title="1 地块基础信息" />
         <a-anchor-link href="#anchor-1" title="2 地块产权信息" />
         <a-anchor-link href="#anchor-2" title="3 添加各类规划用途" />
-        <a-anchor-link href="#anchor-3" title="4 地块状态信息" />
+        <a-anchor-link href="#anchor-3" title="4 地块价值" />
         <!-- <a-anchor-link href="#anchor-4" title="5 管护及利用情况" /> -->
         <a-anchor-link href="#anchor-4" title="5 做地情况" />
       </a-anchor>
@@ -30,11 +30,11 @@
                 <el-input v-model="ruleForm.cbjgmc"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="10">
+            <!-- <el-col :span="10">
               <el-form-item label="入库地块电子编号：" prop="dkdzbh">
                 <el-input v-model="ruleForm.dkdzbh"></el-input>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="10">
               <el-form-item label="地块名称：" prop="dkmc">
                 <el-input v-model="ruleForm.dkmc"></el-input>
@@ -45,11 +45,11 @@
                 <el-input v-model="ruleForm.nscdkbh"></el-input>
               </el-form-item>
             </el-col> -->
-            <el-col :span="10">
+            <!-- <el-col :span="10">
               <el-form-item label="地块编号：" prop="dkbh">
                 <el-input v-model="ruleForm.dkbh"></el-input>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <!-- 文件上传 -->
             <el-col :span="10">
               <el-form-item label="界址点文件上传：" prop="jzdsc">
@@ -91,8 +91,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="10">
-              <el-form-item label="地块面积(公顷)：" prop="dkmj">
-                <el-input v-model="ruleForm.dkmj"></el-input>
+              <el-form-item label="地块面积(㎡)：" prop="dkmj">
+                <el-input
+                  :disabled="selectJbxxByIdObj ? true : false"
+                  v-model="ruleForm.dkmj"
+                ></el-input>
               </el-form-item>
             </el-col>
             <!-- <el-col :span="10">
@@ -108,6 +111,19 @@
             <el-col :span="10">
               <el-form-item label="地块坐落：" prop="dkzl">
                 <el-input v-model="ruleForm.dkzl"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item label="非经营性用地类型：" prop="fjyxydlx">
+                <el-select v-model="ruleForm.fjyxydlx" placeholder="请选择">
+                  <el-option
+                    v-for="item in ruleForm.fjyxydlxList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -149,7 +165,7 @@
           <el-table :data="tableData" border style="width: 60%">
             <el-table-column fixed prop="ghyt" label="规划用途">
             </el-table-column>
-            <el-table-column prop="mj" label="面积(亩)"> </el-table-column>
+            <el-table-column prop="mj" label="面积(㎡)"> </el-table-column>
             <el-table-column prop="rjl" label="容积率"> </el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
               <template slot-scope="scope">
@@ -191,9 +207,14 @@
             </el-form-item>
           </el-col> -->
         </div>
-        <div style="height: 350px" :id="'anchor-3'">
-          <el-divider content-position="left">4 地块状态信息</el-divider>
-          <el-col :span="24">
+        <div style="height: 80px" :id="'anchor-3'">
+          <el-divider content-position="left">4 地块价值</el-divider>
+          <el-col :span="10">
+            <el-form-item label="地块价值(万元)：" prop="dkjz">
+              <el-input v-model="ruleForm.dkjz"></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="24">
             <el-form-item label="前期开发情况：" prop="qqkfqk">
               <el-checkbox-group
                 class="qqkfqk"
@@ -224,11 +245,6 @@
               <el-input v-model="ruleForm.dswqk"></el-input>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="24">
-            <el-form-item label="临时利用情况：" prop="lslyqk">
-              <el-input v-model="ruleForm.lslyqk"></el-input>
-            </el-form-item>
-          </el-col> -->
           <el-col :span="24">
             <el-form-item label="地上物情况说明 ：" prop="dswqksm">
               <el-input
@@ -240,15 +256,31 @@
               >
               </el-input>
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </div>
-        <div style="height: 740px" :id="'anchor-4'">
+        <div style="height: 420px" :id="'anchor-4'">
           <el-divider content-position="left">5 做地情况</el-divider>
           <!-- <el-col :span="10">
             <el-form-item label="操作人：" prop="czr">
               <el-input v-model="ruleForm.czr"></el-input>
             </el-form-item>
           </el-col> -->
+          <el-col :span="10">
+            <el-form-item label="是否按照规划红线做地：" prop="yjazghhxzd">
+              <el-radio-group v-model="ruleForm.yjazghhxzd" size="small">
+                <el-radio label="是" border>是</el-radio>
+                <el-radio label="否" border>否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="有无临时利用：" prop="ylsly">
+              <el-radio-group v-model="ruleForm.ylsly" size="small">
+                <el-radio label="是" border>是</el-radio>
+                <el-radio label="否" border>否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
           <el-col :span="10">
             <el-form-item label="做地是否完成：" prop="zdsfwc">
               <el-radio-group
@@ -286,7 +318,7 @@
               <el-input v-model="ruleForm.jhnf"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10" v-if="ruleForm.zdsfwc">
+          <!-- <el-col :span="10" v-if="ruleForm.zdsfwc">
             <el-form-item label="基准地价：" prop="jzdj">
               <el-input v-model="ruleForm.jzdj"></el-input>
             </el-form-item>
@@ -300,28 +332,15 @@
             <el-form-item label="取得方式：" prop="qdfs">
               <el-input v-model="ruleForm.qdfs"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="10">
+          </el-col> -->
+          <!-- <el-col :span="10">
             <el-form-item label="能否出让：" prop="nfcr">
               <el-radio-group v-model="ruleForm.nfcr" size="small">
                 <el-radio label="是" border>是</el-radio>
                 <el-radio label="否" border>否</el-radio>
               </el-radio-group>
             </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="非经营性用地类型：" prop="fjyxydlx">
-              <el-select v-model="ruleForm.fjyxydlx" placeholder="请选择">
-                <el-option
-                  v-for="item in ruleForm.fjyxydlxList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="10">
             <el-form-item label="坐地未完成：" prop="zdwwc">
               <el-select v-model="ruleForm.zdwwc" placeholder="请选择">
@@ -335,20 +354,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
-            <el-form-item label="有临时利用：" prop="ylsly">
-              <el-select v-model="ruleForm.ylsly" placeholder="请选择">
-                <el-option
-                  v-for="item in ruleForm.ylslyList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
+          <!-- <el-col :span="10">
             <el-form-item label="商业地块：" prop="sydk">
               <el-radio-group v-model="ruleForm.sydk" size="small">
                 <el-radio
@@ -360,7 +366,7 @@
                 >
               </el-radio-group>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="10">
             <el-form-item label="不能出让原因：" prop="bncrbmyy">
               <el-select v-model="ruleForm.bncrbmyy" placeholder="请选择">
@@ -484,10 +490,10 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="面积(亩)">
+          <el-form-item label="面积(㎡)：">
             <el-input v-model="ghytform.mj"></el-input>
           </el-form-item>
-          <el-form-item label="容积率">
+          <el-form-item label="容积率：">
             <el-input v-model="ghytform.rjl"></el-input>
           </el-form-item>
           <el-form-item>
@@ -535,33 +541,21 @@ export default {
       tableDataIndex: null,
       ghytAddorEdit: null,
       ghytform: {
-        mj: "",
-        rjl: "",
+        mj: 0,
+        rjl: 0,
         ghyt: "",
         ghytList: [
           {
-            value: "住宅",
-            label: "住宅",
+            value: "住宅用地",
+            label: "住宅用地",
           },
           {
-            value: "商服",
-            label: "商服",
+            value: "商服用地",
+            label: "商服用地",
           },
           {
-            value: "其他",
-            label: "其他",
-          },
-          {
-            value: "住宅与商服",
-            label: "住宅与商服",
-          },
-          {
-            value: "住宅与其他",
-            label: "住宅与其他",
-          },
-          {
-            value: "商服与其他",
-            label: "商服与其他",
+            value: "其他用地",
+            label: "其他用地",
           },
         ],
       },
@@ -608,7 +602,7 @@ export default {
           },
         ],
         szjd: "",
-        dkmj: "",
+        dkmj: 0,
         // nscmj: "",
         zjmj: "",
         dkzl: "",
@@ -621,16 +615,16 @@ export default {
         // ghyt: "",
         // ghytList: [
         //   {
-        //     value: "住宅",
-        //     label: "住宅",
+        //     value: "住宅用地",
+        //     label: "住宅用地",
         //   },
         //   {
-        //     value: "商服",
-        //     label: "商服",
+        //     value: "商服用地",
+        //     label: "商服用地",
         //   },
         //   {
-        //     value: "其他",
-        //     label: "其他",
+        //     value: "其他用地",
+        //     label: "其他用地",
         //   },
         //   {
         //     value: "住宅与商服",
@@ -706,14 +700,14 @@ export default {
         // 有临时利用
         ylsly: "",
         ylslyList: [
-          // {
-          //   value: "临时周转房",
-          //   label: "临时周转房",
-          // },
-          // {
-          //   value: "政府项目或政府单位临时利用",
-          //   label: "政府项目或政府单位临时利用",
-          // },
+          {
+            value: "是",
+            label: "是",
+          },
+          {
+            value: "否",
+            label: "否",
+          },
           // {
           //   value: "有偿出租",
           //   label: "有偿出租",
@@ -752,6 +746,18 @@ export default {
         bz: "",
       },
       rules: {
+        ylsly: [{ required: true, message: "请选择", trigger: "change" }],
+        zdsfwc: [
+          { required: true, message: "请选择做地是否完成", trigger: "change" },
+        ],
+        yjazghhxzd: [
+          {
+            required: true,
+            message: "请选择是否按照规划红线做地",
+            trigger: "blur",
+          },
+        ],
+        dkjz: [{ required: true, message: "请输入地块价值", trigger: "blur" }],
         bdcqzsh: [
           { required: true, message: "请输入不动产权证书号", trigger: "blur" },
         ],
@@ -834,20 +840,20 @@ export default {
 
     const res2 = await this.$api.selectEnums();
     res2.data.forEach((ele) => {
-      if (ele.name == "前期开发情况") {
-        // 前期开发情况
-        this.qqkfqkList.push(ele);
-      }
+      // if (ele.name == "前期开发情况") {
+      //   // 前期开发情况
+      //   this.qqkfqkList.push(ele);
+      // }
       if (ele.name == "非经营性用地类型") {
         //非经营性用地类型
         ele.label = ele.value;
         this.ruleForm.fjyxydlxList.push(ele);
       }
-      if (ele.name == "有临时利用") {
-        //有临时利用
-        ele.label = ele.value;
-        this.ruleForm.ylslyList.push(ele);
-      }
+      // if (ele.name == "有临时利用") {
+      //   //有临时利用
+      //   ele.label = ele.value;
+      //   this.ruleForm.ylslyList.push(ele);
+      // }
       if (ele.name == "商业地块") {
         //商业地块
         ele.label = ele.value;
@@ -877,6 +883,7 @@ export default {
       }
       this.shape = this.shape.substr(0, this.shape.length - 1);
       this.shape += ")";
+      // console.log(this.shape);
       this.isDetail = true;
       this.tableData = this.selectJbxxByIdObj.cbdkDkghxxes;
       this.ruleForm = { ...this.ruleForm, ...this.selectJbxxByIdObj };
@@ -1006,9 +1013,37 @@ export default {
           // 新增
           const myObj = { ...this.ruleForm };
           myObj.cbdkDkghxxes = this.tableData;
+          myObj.cbdkDkghxxes[0].index = myObj.cbdkDkghxxes[0].ghyt;
+          myObj.cbdkDkghxxes.yjazghhxzd = this.ruleForm.yjazghhxzd;
+          myObj.cbdkDkghxxes.ylsly = this.ruleForm.ylsly;
+          myObj.cbdkDkghxxes.zdsfwc = this.ruleForm.zdsfwc;
+          // console.log(this.ruleForm.cbdkDkghxxes);
+          let zzmj = 0,
+            sfmj = 0,
+            qtmj = 0;
+          myObj.cbdkDkghxxes.forEach((ele) => {
+            ele.yjazghhxzd = this.ruleForm.yjazghhxzd;
+            ele.ylsly = this.ruleForm.ylsly;
+            ele.zdsfwc = this.ruleForm.zdsfwc;
+            if (ele.ghyt == "住宅用地") {
+              zzmj += ele.mj;
+            } else if (ele.ghyt == "商服用地") {
+              sfmj += ele.mj;
+            } else if (ele.ghyt == "其他用地") {
+              qtmj += ele.mj;
+            }
+          });
+          myObj.sfydmj = sfmj;
+          myObj.zzydmj = zzmj;
+          myObj.qtydmj = qtmj;
           myObj.czr = "user1"; //默认操作人
           myObj.zt = "在库";
           myObj.cjsj = null;
+          if (myObj.cbdkDkghxxes.length > 0) {
+            myObj.ghyt = myObj.cbdkDkghxxes[0].ghyt;
+          } else {
+            myObj.ghyt = "";
+          }
           // myObj.null = null;
           if (myObj.jzdj) {
             myObj.jzdj = myObj.jzdj.toString();
@@ -1033,6 +1068,30 @@ export default {
           // 修改
           const myObj = { ...this.ruleForm };
           myObj.cbdkDkghxxes = this.tableData;
+          myObj.cbdkDkghxxes[0].index = myObj.cbdkDkghxxes[0].ghyt;
+          let zzmj = 0,
+            sfmj = 0,
+            qtmj = 0;
+          myObj.cbdkDkghxxes.forEach((ele) => {
+            ele.yjazghhxzd = this.ruleForm.yjazghhxzd;
+            ele.ylsly = this.ruleForm.ylsly;
+            ele.zdsfwc = this.ruleForm.zdsfwc;
+            if (ele.ghyt == "住宅用地") {
+              zzmj += ele.mj;
+            } else if (ele.ghyt == "商服用地") {
+              sfmj += ele.mj;
+            } else if (ele.ghyt == "其他用地") {
+              qtmj += ele.mj;
+            }
+          });
+          myObj.sfydmj = sfmj;
+          myObj.zzydmj = zzmj;
+          myObj.qtydmj = qtmj;
+          if (myObj.cbdkDkghxxes.length > 0) {
+            myObj.ghyt = myObj.cbdkDkghxxes[0].ghyt;
+          } else {
+            myObj.ghyt = "";
+          }
           myObj.czr = "user1"; //默认操作人
           myObj.zt = "在库";
           myObj.cjsj = null;
@@ -1040,6 +1099,8 @@ export default {
           if (myObj.jzdj) {
             myObj.jzdj = myObj.jzdj.toString();
           }
+          // console.log(this.shape)
+          myObj.shape = this.shape;
           delete myObj.name;
           // delete myObj.shape;
           delete myObj.fjyxydlxList;
@@ -1155,6 +1216,7 @@ export default {
         }
         shape1 = shape1.substr(0, shape1.length - 1);
         shape1 += ")";
+        this.shape = shape1;
         this.ruleForm.shape = shape1;
       } else {
         this.$message.error("地块文件格式错误");
@@ -1184,6 +1246,14 @@ export default {
     },
     maphandleClose() {
       this.mapDialogVisible = false;
+    },
+  },
+  watch: {
+    tableData: function (tableData) {
+      this.ruleForm.dkmj = 0;
+      tableData.forEach((ele) => {
+        this.ruleForm.dkmj += ele.mj;
+      });
     },
   },
 };

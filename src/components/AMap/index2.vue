@@ -42,6 +42,7 @@ import { SuperMap } from "@supermap/iclient-classic";
 export default {
   data() {
     return {
+      where:null,
       map: null,
       fields: [
         { field: "cbjgmc", alias: "储备机构名称" },
@@ -85,6 +86,7 @@ export default {
         { field: "jzdj", alias: "基准地价" },
         { field: "czr", alias: "操作人" },
       ],
+      selectSingleClick:null
     };
   },
   mounted() {
@@ -130,8 +132,8 @@ export default {
         target: "map",
         renderer: "canvas",
       });
-      this._selectSingleClick = new Select();
-      this.map.addInteraction(this._selectSingleClick);
+      this.selectSingleClick = new Select();
+      this.map.addInteraction(this.selectSingleClick);
       this.map.addOverlay(this._overlay);
       // var content = document.getElementById("popup-content");
       var maplayer = null;
@@ -160,7 +162,8 @@ export default {
             thematicMap: ele.subLayers[0].thematicMap,
           });
           this.map.addLayer(maplayer);
-        } else if (ele.subLayers[0].layerType == "WMS") {
+        } 
+        else if (ele.subLayers[0].layerType == "WMS") {
           maplayer = new Tile({
             id: ele.subLayers[0].id,
             source: new TileWMS({
@@ -194,12 +197,13 @@ export default {
         }),
         style: function (e) {
           var pp = e.getProperties();
+          // console.log(pp)
           var css = [];
           var line_color, fill_color;
           if (pp.zt != null && pp.zt != undefined && pp.zt != "") {
             if (pp.zt == "在库") {
-              line_color = "#b8b95c";
-              fill_color = "#b8b95c";
+              line_color = "#F56C6C";
+              fill_color = "#F56C6C";
             } else if (pp.zt == "部分出库") {
               line_color = "#ff9966";
               fill_color = "#ff9966";
@@ -215,7 +219,7 @@ export default {
             new Style({
               stroke: new Stroke({
                 color: line_color,
-                width: 1,
+                width: 5,
               }),
               fill: new Fill({
                 color: fill_color,
@@ -297,10 +301,9 @@ export default {
         data: "filter=" + filter,
       }).then((data) => {
         var gml = new SuperMap.Format.GML().read(data.data);
-        console.log(gml);
         var geoJsonString = new SuperMap.Format.GeoJSON().write(gml, false);
         data = JSON.parse(geoJsonString);
-        console.log(data);
+        // console.log(data);
         var _data = { features: [], type: "FeatureCollection" };
 
         if (rksjStartTime != "" && rksjEndTime != "") {
@@ -352,12 +355,12 @@ export default {
       });
     },
     bindEvent() {
+      // console.log(this.selectSingleClick)
       var me = this;
-      this._selectSingleClick.on(
+      this.selectSingleClick.on(
         "select",
         function (evt) {
           //要素选中事件
-          console.log(evt);
           var features = evt.target.getFeatures().getArray();
           var coordinates = evt.mapBrowserEvent.coordinate;
           var content = document.getElementById("popup-content");
@@ -388,7 +391,7 @@ export default {
       //       "click",
       //       function () {
       //         this._overlay.setPosition(undefined);
-      //         this._selectSingleClick.getFeatures().clear();
+      //         this.selectSingleClick.getFeatures().clear();
       //         dojo.byId("popup-closer").blur();
       //         return false;
       //       }.bind(this)

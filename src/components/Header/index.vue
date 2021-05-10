@@ -1,7 +1,7 @@
 <template>
   <div class="nav">
     <div class="nav-left">
-      <p class="title">土地储备中心-储备地块管理</p>
+      <p class="title">土地储备出让中心-储备地块管理</p>
       <el-menu
         :default-active="activeIndex"
         class="header-nav"

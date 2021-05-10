@@ -64,7 +64,7 @@
           <el-input
             v-model="form.cbjgmc"
             @keyup.enter.native="onSubmit"
-            placeholder="请输入名称"
+            placeholder="请输入地块名称"
           ></el-input>
           <el-button type="primary" @click="onSubmit">搜索</el-button>
           <el-button @click="resetForm('form')">重置</el-button>
@@ -77,7 +77,7 @@
           <el-table-column
             prop="dkmc"
             label="地块名称"
-            width="100"
+            width="300"
             :show-overflow-tooltip="true"
           >
           </el-table-column>
@@ -93,12 +93,12 @@
           <el-table-column prop="zt" label="储备状态"> </el-table-column>
           <el-table-column prop="rksj" label="入库时间"> </el-table-column>
           <el-table-column
-            prop="fjyxydlx"
-            label="非经营性用地"
+            prop="dkmj"
+            label="地块面积（平方米）"
             :show-overflow-tooltip="true"
           >
           </el-table-column>
-          <el-table-column prop="nfcr" label="能否出让"> </el-table-column>
+          <el-table-column prop="ghyt" label="规划用途"> </el-table-column>
           <el-table-column fixed="right" label="操作" width="200">
             <template slot-scope="scope">
               <el-button
@@ -862,7 +862,6 @@ export default {
       this.total = data.total;
       this.tableData = data.data;
       console.log(this.tableData, data, this.total);
-      this.searchDataById(50);
       let data1 = await this.$api.getXzs();
       this.xzqList = data1.data;
     },

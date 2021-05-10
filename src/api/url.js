@@ -21,7 +21,6 @@ export default {
     getshape:'/cbdk-jbxx/getshape',//根据ID获取图形
     saveYstx:'/cbdk-ystx/saveYstx',//存储
     
-    
     // 表格
     getReportFormByJgmcOrSzxzq:'/cbdk-bbxx/getReportFormByJgmcOrSzxzq',//按储备机构和区域查询的报表
     getMercantileConstructiveLand:'/cbdk-bbxx/getMercantileConstructiveLand',//统计经营性用地拟出让情况

@@ -126,10 +126,10 @@
                 <el-table-column prop="crjhzs" label="总数"> </el-table-column>
                 <el-table-column prop="crjhmj" label="面积"> </el-table-column>
               </el-table-column>
-              <el-table-column label="未列入出让条件">
+              <!-- <el-table-column label="未列入出让条件">
                 <el-table-column prop="wcrjhzs" label="总数"> </el-table-column>
                 <el-table-column prop="wcrjhmj" label="面积"> </el-table-column>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
           </div>
         </el-tab-pane>
@@ -162,10 +162,10 @@
                 <el-table-column prop="crjhzs" label="总数"> </el-table-column>
                 <el-table-column prop="crjhmj" label="面积"> </el-table-column>
               </el-table-column>
-              <el-table-column label="未列入出让条件">
+              <!-- <el-table-column label="未列入出让条件">
                 <el-table-column prop="wcrjhzs" label="总数"> </el-table-column>
                 <el-table-column prop="wcrjhmj" label="面积"> </el-table-column>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
           </div>
         </el-tab-pane>
@@ -195,10 +195,10 @@
                 <el-table-column prop="crjhzs" label="总数"> </el-table-column>
                 <el-table-column prop="crjhmj" label="面积"> </el-table-column>
               </el-table-column>
-              <el-table-column label="未列入出让条件">
+              <!-- <el-table-column label="未列入出让条件">
                 <el-table-column prop="wcrjhzs" label="总数"> </el-table-column>
                 <el-table-column prop="wcrjhmj" label="面积"> </el-table-column>
-              </el-table-column>
+              </el-table-column> -->
             </el-table>
           </div>
         </el-tab-pane>
@@ -254,9 +254,8 @@ export default {
   async created() {
     // 储备机构
     const res = await this.$api.getReportFormByJgmcOrSzxzq("cbjgmc");
-    console.log(res)
+    console.log(res);
     res.data.forEach((ele) => {
-      console.log(ele);
       if (!ele.qtsum) {
         ele.qtsum = 0;
       }
@@ -309,6 +308,10 @@ export default {
     // 经营性用地拟出让情况
     const res3 = await this.$api.getMercantileConstructiveLand();
     res3.data.forEach((ele) => {
+      console.log(ele);
+      if (!ele.zs) {
+        ele.zs = "0.00";
+      }
       if (!ele.wcrjhzs) {
         ele.wcrjhzs = "0.00";
       }
@@ -336,6 +339,9 @@ export default {
     // 统计住宅用地拟出让情况
     const res4 = await this.$api.getResidentialLand();
     res4.data.forEach((ele) => {
+      if (!ele.zs) {
+        ele.zs = "0.00";
+      }
       if (!ele.crjhzs) {
         ele.crjhzs = "0";
       }
@@ -360,6 +366,9 @@ export default {
     // 商业用地拟出
     const res5 = await this.$api.getCommercialLand();
     res5.data.forEach((ele) => {
+      if (!ele.zs) {
+        ele.zs = "0.00";
+      }
       if (!ele.crjhzs) {
         ele.crjhzs = "0";
       }

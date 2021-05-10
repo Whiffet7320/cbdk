@@ -1,10 +1,4 @@
-// module.exports = {
-//     devServer: {
-//         proxy: {
-//             "/localhost:8080": {
-//               changeOrigin: true, 
-//               target: '/'
-//             }
-//           }
-//     }
-// }
+module.exports = {
+    outputDir:"tdcb",
+	publicPath:"./"  //基础路径
+}
