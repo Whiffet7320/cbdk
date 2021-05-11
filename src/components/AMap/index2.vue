@@ -35,14 +35,14 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import GeoJSON from "ol/format/GeoJSON";
 import Select from "ol/interaction/Select";
-// import { toLonLat } from "ol/proj";
-// import { toStringHDMS } from "ol/coordinate";
+// import { transform } from "ol/proj";
 import { SuperMap } from "@supermap/iclient-classic";
+// import { toStringHDMS } from "ol/coordinate";
 
 export default {
   data() {
     return {
-      where:null,
+      where: null,
       map: null,
       fields: [
         { field: "cbjgmc", alias: "储备机构名称" },
@@ -86,7 +86,7 @@ export default {
         { field: "jzdj", alias: "基准地价" },
         { field: "czr", alias: "操作人" },
       ],
-      selectSingleClick:null
+      selectSingleClick: null,
     };
   },
   mounted() {
@@ -162,8 +162,7 @@ export default {
             thematicMap: ele.subLayers[0].thematicMap,
           });
           this.map.addLayer(maplayer);
-        } 
-        else if (ele.subLayers[0].layerType == "WMS") {
+        } else if (ele.subLayers[0].layerType == "WMS") {
           maplayer = new Tile({
             id: ele.subLayers[0].id,
             source: new TileWMS({
@@ -363,25 +362,38 @@ export default {
           //要素选中事件
           var features = evt.target.getFeatures().getArray();
           var coordinates = evt.mapBrowserEvent.coordinate;
+          console.log(evt)
           var content = document.getElementById("popup-content");
           content.innerHTML = "";
-          if (features.length > 0) {
-            var properties = features[0].getProperties();
-            for (var i = 0; i < this.fields.length; i++) {
-              // console.log(properties)
-              content.innerHTML +=
-                "<b>" +
-                this.fields[i].alias +
-                ":</b><span>" +
-                (properties[this.fields[i].field] || "") +
-                "</span><br/>";
-            }
-            me._overlay.setPosition(coordinates);
-          } else {
-            me._overlay.setPosition(undefined);
+          var arr = [];
+          this.$api
+            .selectEnumsByPage("地图信息字段", 1, 100)
+            .then((res) => {
+              res.data.forEach((ele) => {
+                arr.push(ele.value);
+              });
+            })
+            .then(() => {
+              if (features.length > 0) {
+                var properties = features[0].getProperties();
+                for (var i = 0; i < this.fields.length; i++) {
+                  if (arr.indexOf(this.fields[i].alias) == -1) {
+                    content.innerHTML +=
+                      "<b>" +
+                      this.fields[i].alias +
+                      ":</b><span>" +
+                      (properties[this.fields[i].field] || "") +
+                      "</span><br/>";
+                  }
+                }
+                content.innerHTML += `<b>X:${coordinates[0]}<br/>Y:${coordinates[1]}<b/>`
+                me._overlay.setPosition(coordinates);
+              } else {
+                me._overlay.setPosition(undefined);
 
-            document.getElementById("popup-closer").blur();
-          }
+                document.getElementById("popup-closer").blur();
+              }
+            });
         }.bind(this)
       );
 
@@ -448,5 +460,9 @@ export default {
 }
 .ol-popup-closer:after {
   content: "✖";
+}
+#popup-content {
+  height: 300px;
+  overflow-y: scroll;
 }
 </style>
